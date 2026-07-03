@@ -1,0 +1,170 @@
+/* Cartwright brand tokens — from the Summer 2026 style guide.
+   Primary palette does the work; secondary red/teal appear only as
+   severity accents. */
+
+:root {
+  --navy: #22213b;
+  --blue: #3660eb;
+  --cream: #fffaeb;
+  --amber: #ffbf33;
+  --red: #f0441f;
+  --teal: #097663;
+  --pink: #f1a2da;
+
+  --ink: var(--navy);
+  --paper: var(--cream);
+  --line: rgba(34, 33, 59, 0.14);
+
+  /* Awesome Serif is Cartwright's licensed display face. Drop the font
+     files into /public/fonts and uncomment the @font-face below. Fraunces
+     stands in until then. */
+  --font-display: "Awesome Serif", "Fraunces", Georgia, serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+}
+
+/* @font-face {
+  font-family: "Awesome Serif";
+  src: url("/fonts/AwesomeSerif.woff2") format("woff2");
+  font-weight: 400 700;
+  font-display: swap;
+} */
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0 0 0.5rem;
+}
+h1 { font-size: 2.1rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.1rem; }
+
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 3px solid var(--amber);
+  outline-offset: 2px;
+}
+
+/* ── Shell ── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: var(--navy);
+}
+.wordmark {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--blue);
+  letter-spacing: 0.01em;
+}
+.wordmark span { color: var(--cream); font-family: var(--font-body); font-size: 0.85rem; margin-left: 0.75rem; }
+.topbar a { color: var(--cream); font-size: 0.9rem; }
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+}
+.lede { font-size: 1.05rem; max-width: 55ch; }
+
+/* ── Cards and tables ── */
+.card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 1.25rem 1.5rem;
+  margin: 1rem 0;
+}
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; font-size: 0.8rem; text-transform: none; color: rgba(34,33,59,0.6); font-weight: 500; padding: 0.5rem 0.75rem; }
+td { padding: 0.7rem 0.75rem; border-top: 1px solid var(--line); }
+
+/* ── Buttons ── */
+.btn {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 999px; /* brand pill */
+  padding: 0.6rem 1.4rem;
+  cursor: pointer;
+  background: var(--blue);
+  color: var(--cream);
+}
+.btn:hover { filter: brightness(1.08); text-decoration: none; }
+.btn.secondary { background: transparent; color: var(--navy); border: 1.5px solid var(--navy); }
+.btn.warn { background: var(--red); }
+.btn:disabled { opacity: 0.5; cursor: default; }
+
+/* ── Status pills ── */
+.pill {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.15rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+.pill.draft    { background: var(--amber); color: var(--navy); }
+.pill.edited   { background: var(--pink);  color: var(--navy); }
+.pill.shared   { background: var(--teal);  color: var(--cream); }
+.pill.archived { background: var(--line);  color: var(--navy); }
+
+/* ── Flags ── */
+.flag { border-left: 5px solid var(--amber); background: #fff; padding: 0.6rem 1rem; margin: 0.5rem 0; border-radius: 0 12px 12px 0; }
+.flag.high { border-left-color: var(--red); }
+.flag.low  { border-left-color: var(--teal); }
+.flag .sev { font-size: 0.75rem; font-weight: 700; }
+
+/* ── Forms ── */
+label { display: block; font-size: 0.85rem; font-weight: 500; margin: 0.9rem 0 0.25rem; }
+input, textarea, select {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  padding: 0.55rem 0.75rem;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ink);
+}
+textarea { min-height: 10rem; resize: vertical; }
+textarea.editor { min-height: 22rem; font-size: 0.95rem; line-height: 1.6; }
+
+.error { color: var(--red); font-size: 0.9rem; }
+.muted { color: rgba(34,33,59,0.6); font-size: 0.9rem; }
+
+/* Signature: semi-circle brand motif under page titles */
+.semis { display: flex; gap: 6px; margin: 0.25rem 0 1.5rem; }
+.semis i { width: 26px; height: 13px; border-radius: 13px 13px 0 0; display: block; }
+.semis i:nth-child(1) { background: var(--blue); }
+.semis i:nth-child(2) { background: var(--amber); }
+.semis i:nth-child(3) { background: var(--pink); }
+
+/* Public share view */
+.share-shell { max-width: 720px; margin: 0 auto; padding: 3rem 1.5rem; }
+.share-content h2 { margin-top: 1.75rem; }
+
+@media (max-width: 640px) {
+  .page { padding: 1.5rem 1rem 3rem; }
+  .topbar { padding: 0.75rem 1rem; }
+  h1 { font-size: 1.7rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
