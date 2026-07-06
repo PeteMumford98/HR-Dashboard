@@ -8,11 +8,12 @@ import { randomUUID } from "crypto";
 export type Employee = {
   id: string; full_name: string; email: string | null; job_title: string | null;
   manager_name: string | null; start_date: string | null; status: string;
+  responsibilities: string | null;
 };
 
 export type Meeting = {
   id: string; employee_id: string; meeting_type: string; meeting_date: string;
-  granola_note_id: string | null; created_at: string;
+  granola_note_id: string | null; raw_note: string | null; created_at: string;
 };
 
 export type Flag = { issue: string; severity: "high" | "medium" | "low"; location: string };
@@ -29,19 +30,46 @@ export type ShareLink = {
   revoked: boolean; view_count: number;
 };
 
+export type ObjectiveStatus = "on_track" | "at_risk" | "done";
+
+export type Objective = {
+  id: string; employee_id: string; title: string; status: ObjectiveStatus;
+  due_date: string | null; created_at: string; updated_at: string;
+};
+
 export const DEMO_USER = { id: "demo-user" };
 
 const now = "2026-01-01T00:00:00.000Z";
 
 const employees: Employee[] = [
-  { id: "emp-1", full_name: "Ade Okafor", email: "ade@example.com", job_title: "Account Executive", manager_name: "Sam Manager", start_date: "2024-03-01", status: "active" },
-  { id: "emp-2", full_name: "Priya Shah", email: "priya@example.com", job_title: "Customer Success Lead", manager_name: "Sam Manager", start_date: "2023-08-15", status: "active" },
-  { id: "emp-3", full_name: "Tom Fielding", email: "tom@example.com", job_title: "Support Specialist", manager_name: "Jo Director", start_date: "2025-01-10", status: "active" },
+  {
+    id: "emp-1", full_name: "Ade Okafor", email: "ade@example.com", job_title: "Account Executive",
+    manager_name: "Sam Manager", start_date: "2024-03-01", status: "active",
+    responsibilities: "Owns a mid-market sales patch across the UK. Runs discovery through to close, keeps CRM pipeline data accurate, and mentors new SDRs on qualification.",
+  },
+  {
+    id: "emp-2", full_name: "Priya Shah", email: "priya@example.com", job_title: "Customer Success Lead",
+    manager_name: "Sam Manager", start_date: "2023-08-15", status: "active",
+    responsibilities: "Leads the customer success team of four. Owns renewal and expansion targets, runs quarterly business reviews with top accounts, and sets the team's playbooks.",
+  },
+  {
+    id: "emp-3", full_name: "Tom Fielding", email: "tom@example.com", job_title: "Support Specialist",
+    manager_name: "Jo Director", start_date: "2025-01-10", status: "active",
+    responsibilities: "First response on the support queue. Triages and resolves tickets against SLA, escalates product bugs, and maintains the internal knowledge base.",
+  },
 ];
 
 const meetings: Meeting[] = [
-  { id: "meet-1", employee_id: "emp-1", meeting_type: "one_to_one", meeting_date: "2026-06-20", granola_note_id: null, created_at: now },
-  { id: "meet-2", employee_id: "emp-2", meeting_type: "review", meeting_date: "2026-06-15", granola_note_id: null, created_at: now },
+  {
+    id: "meet-1", employee_id: "emp-1", meeting_type: "one_to_one", meeting_date: "2026-06-20",
+    granola_note_id: null, created_at: now,
+    raw_note: "Ade - 1:1 20 June. Pipeline at 3.2x, feeling good about Q3. Wants more exposure to enterprise deal structuring - keen to shadow one this month. Sam to add Ade to onboarding call rota. Follow up 20 July.",
+  },
+  {
+    id: "meet-2", employee_id: "emp-2", meeting_type: "review", meeting_date: "2026-06-15",
+    granola_note_id: null, created_at: now,
+    raw_note: "Priya mid-year review. NRR 108% vs 105% target, team CSAT 94%. Recovered two at-risk accounts ahead of renewal. Rating: exceeds expectations. Wants to shadow a people-manager skip-level next quarter. Enrol in Q3 leadership cohort.",
+  },
 ];
 
 const writeups: Writeup[] = [
@@ -69,6 +97,14 @@ const guidelines = [
   { title: "Review meetings", content: "Performance review write-ups must record: objectives reviewed, evidence discussed, an agreed rating or outcome if applicable, development objectives for the next period, and support the company will provide." },
 ];
 
+const objectives: Objective[] = [
+  { id: "obj-1", employee_id: "emp-1", title: "Close $400k of enterprise pipeline this quarter", status: "on_track", due_date: "2026-09-30", created_at: now, updated_at: now },
+  { id: "obj-2", employee_id: "emp-1", title: "Shadow an enterprise deal structuring review", status: "at_risk", due_date: "2026-07-15", created_at: now, updated_at: now },
+  { id: "obj-3", employee_id: "emp-2", title: "Grow net revenue retention to 110%", status: "on_track", due_date: "2026-12-31", created_at: now, updated_at: now },
+  { id: "obj-4", employee_id: "emp-2", title: "Complete Q3 leadership cohort", status: "on_track", due_date: "2026-09-30", created_at: now, updated_at: now },
+  { id: "obj-5", employee_id: "emp-3", title: "Bring first-response time under 2 hours", status: "done", due_date: "2026-06-01", created_at: now, updated_at: now },
+];
+
 const shareLinks: ShareLink[] = [];
 const auditLog: { actor: string; action: string; entity: string; entity_id: string; created_at: string }[] = [];
 
@@ -80,8 +116,46 @@ export function getEmployee(id: string) {
   return employees.find((e) => e.id === id) ?? null;
 }
 
+export function updateEmployeeResponsibilities(id: string, responsibilities: string) {
+  const e = employees.find((x) => x.id === id);
+  if (!e) return null;
+  e.responsibilities = responsibilities;
+  return e;
+}
+
 export function listGuidelines() {
   return guidelines;
+}
+
+export function listObjectives(employeeId: string) {
+  return objectives
+    .filter((o) => o.employee_id === employeeId)
+    .sort((a, b) => (a.due_date ?? "").localeCompare(b.due_date ?? ""));
+}
+
+export function createObjective(employeeId: string, title: string, dueDate: string | null) {
+  const createdAt = new Date().toISOString();
+  const objective: Objective = {
+    id: randomUUID(), employee_id: employeeId, title, status: "on_track",
+    due_date: dueDate, created_at: createdAt, updated_at: createdAt,
+  };
+  objectives.push(objective);
+  return objective;
+}
+
+export function updateObjective(id: string, patch: { title?: string; status?: ObjectiveStatus; due_date?: string | null }) {
+  const o = objectives.find((x) => x.id === id);
+  if (!o) return null;
+  if (patch.title !== undefined) o.title = patch.title;
+  if (patch.status !== undefined) o.status = patch.status;
+  if (patch.due_date !== undefined) o.due_date = patch.due_date;
+  o.updated_at = new Date().toISOString();
+  return o;
+}
+
+export function deleteObjective(id: string) {
+  const i = objectives.findIndex((x) => x.id === id);
+  if (i >= 0) objectives.splice(i, 1);
 }
 
 function meetingFor(writeup: Writeup) {
@@ -101,7 +175,10 @@ export function listWriteupsForEmployee(employeeId: string) {
     .sort((a, b) => b.created_at.localeCompare(a.created_at))
     .map((w) => {
       const m = meetingFor(w);
-      return { ...w, meetings: m ? { meeting_type: m.meeting_type, meeting_date: m.meeting_date } : null };
+      return {
+        ...w,
+        meetings: m ? { meeting_type: m.meeting_type, meeting_date: m.meeting_date, raw_note: m.raw_note } : null,
+      };
     });
 }
 
@@ -112,18 +189,19 @@ export function getWriteupFull(id: string) {
   return {
     ...w,
     employees: { full_name: getEmployee(w.employee_id)?.full_name ?? "" },
-    meetings: m ? { meeting_type: m.meeting_type, meeting_date: m.meeting_date } : null,
+    meetings: m ? { meeting_type: m.meeting_type, meeting_date: m.meeting_date, raw_note: m.raw_note } : null,
   };
 }
 
 export function createMeetingAndWriteup(input: {
-  employeeId: string; meetingType: string; meetingDate: string; granolaNoteRef?: string | null;
+  employeeId: string; meetingType: string; meetingDate: string; granolaNoteRef?: string | null; rawNote: string;
   content: string; flags: Flag[]; suggestions: string[]; modelFormat: string; modelReview: string;
 }) {
   const createdAt = new Date().toISOString();
   const meeting: Meeting = {
     id: randomUUID(), employee_id: input.employeeId, meeting_type: input.meetingType,
-    meeting_date: input.meetingDate, granola_note_id: input.granolaNoteRef ?? null, created_at: createdAt,
+    meeting_date: input.meetingDate, granola_note_id: input.granolaNoteRef ?? null,
+    raw_note: input.rawNote, created_at: createdAt,
   };
   meetings.push(meeting);
 

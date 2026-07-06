@@ -1,7 +1,7 @@
 import { supabaseServer, supabaseAdmin } from "./supabaseServer";
 import { isSupabaseConfigured } from "./config";
 import * as mock from "./mockStore";
-import type { Flag } from "./mockStore";
+import type { Flag, ObjectiveStatus } from "./mockStore";
 
 // Data-access facade. Every page and API route goes through here instead of
 // calling Supabase directly, so the app can run against the in-memory demo
@@ -30,6 +30,66 @@ export async function getEmployee(id: string) {
   return data;
 }
 
+export async function updateEmployeeResponsibilities(id: string, responsibilities: string) {
+  if (!isSupabaseConfigured()) {
+    const e = mock.updateEmployeeResponsibilities(id, responsibilities);
+    if (!e) throw new Error("Not found");
+    return;
+  }
+  const supabase = supabaseServer();
+  const { error } = await supabase
+    .from("employees")
+    .update({ responsibilities, updated_at: new Date().toISOString() })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
+export async function listObjectives(employeeId: string) {
+  if (!isSupabaseConfigured()) return mock.listObjectives(employeeId);
+  const supabase = supabaseServer();
+  const { data } = await supabase
+    .from("objectives")
+    .select("id, title, status, due_date")
+    .eq("employee_id", employeeId)
+    .order("due_date", { ascending: true });
+  return data ?? [];
+}
+
+export async function createObjective(employeeId: string, title: string, dueDate: string | null) {
+  if (!isSupabaseConfigured()) return mock.createObjective(employeeId, title, dueDate);
+  const supabase = supabaseServer();
+  const { data, error } = await supabase
+    .from("objectives")
+    .insert({ employee_id: employeeId, title, due_date: dueDate })
+    .select("id, title, status, due_date").single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function updateObjective(id: string, patch: { title?: string; status?: ObjectiveStatus; due_date?: string | null }) {
+  if (!isSupabaseConfigured()) {
+    const o = mock.updateObjective(id, patch);
+    if (!o) throw new Error("Not found");
+    return;
+  }
+  const supabase = supabaseServer();
+  const { error } = await supabase
+    .from("objectives")
+    .update({ ...patch, updated_at: new Date().toISOString() })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
+export async function deleteObjective(id: string) {
+  if (!isSupabaseConfigured()) {
+    mock.deleteObjective(id);
+    return;
+  }
+  const supabase = supabaseServer();
+  const { error } = await supabase.from("objectives").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
 export async function listRecentWriteups(limit: number) {
   if (!isSupabaseConfigured()) return mock.listRecentWriteups(limit);
   const supabase = supabaseServer();
@@ -46,7 +106,7 @@ export async function listWriteupsForEmployee(employeeId: string) {
   const supabase = supabaseServer();
   const { data } = await supabase
     .from("writeups")
-    .select("id, status, created_at, meetings(meeting_type, meeting_date)")
+    .select("id, status, created_at, meetings(meeting_type, meeting_date, raw_note)")
     .eq("employee_id", employeeId)
     .order("created_at", { ascending: false });
   return data ?? [];
@@ -57,7 +117,7 @@ export async function getWriteupFull(id: string) {
   const supabase = supabaseServer();
   const { data } = await supabase
     .from("writeups")
-    .select("*, employees(full_name), meetings(meeting_type, meeting_date)")
+    .select("*, employees(full_name), meetings(meeting_type, meeting_date, raw_note)")
     .eq("id", id)
     .single();
   return data;
@@ -71,7 +131,7 @@ export async function listGuidelines() {
 }
 
 export async function createMeetingAndWriteup(input: {
-  employeeId: string; meetingType: string; meetingDate: string; granolaNoteRef?: string | null;
+  employeeId: string; meetingType: string; meetingDate: string; granolaNoteRef?: string | null; rawNote: string;
   content: string; flags: Flag[]; suggestions: string[]; modelFormat: string; modelReview: string;
 }) {
   if (!isSupabaseConfigured()) return mock.createMeetingAndWriteup(input);
@@ -84,7 +144,7 @@ export async function createMeetingAndWriteup(input: {
       meeting_type: input.meetingType,
       meeting_date: input.meetingDate,
       granola_note_id: input.granolaNoteRef ?? null,
-      raw_note: null,
+      raw_note: input.rawNote,
     })
     .select("id").single();
   if (mErr) throw new Error(mErr.message);

@@ -30,6 +30,13 @@ export default async function WriteupPage({ params }: { params: { id: string } }
           flags={writeup.review_flags ?? []}
           suggestions={writeup.suggestions ?? []}
         />
+
+        {(writeup as any).meetings?.raw_note && (
+          <details className="card">
+            <summary>Original meeting note</summary>
+            <p className="muted" style={{ whiteSpace: "pre-wrap", marginTop: "0.75rem" }}>{(writeup as any).meetings.raw_note}</p>
+          </details>
+        )}
       </main>
     </>
   );

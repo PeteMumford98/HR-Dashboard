@@ -34,12 +34,13 @@ export async function POST(req: Request) {
       ? await reviewPass(formatted, await listGuidelines())
       : demoReviewPass(formatted);
 
-    // 3. Store meeting + draft write-up.
+    // 3. Store meeting (including the note itself) + draft write-up.
     const writeup = await createMeetingAndWriteup({
       employeeId,
       meetingType,
       meetingDate,
       granolaNoteRef,
+      rawNote: note,
       content: review.content,
       flags: review.flags,
       suggestions: review.suggestions,

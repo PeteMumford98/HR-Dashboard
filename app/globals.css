@@ -125,6 +125,42 @@ td { padding: 0.7rem 0.75rem; border-top: 1px solid var(--line); }
 .pill.shared   { background: var(--teal);  color: var(--cream); }
 .pill.archived { background: var(--line);  color: var(--navy); }
 
+/* ── Objectives ── */
+.objective-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.objective-row:first-child { border-top: none; }
+.objective-form {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.objective-form input[type="text"], .objective-form input:not([type]) { flex: 1 1 220px; }
+.objective-form input[type="date"] { flex: 0 1 160px; }
+.pill-select {
+  border-radius: 999px;
+  border: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.2rem 0.6rem;
+  width: auto;
+}
+.pill-select.on_track { background: var(--teal); color: var(--cream); }
+.pill-select.at_risk  { background: var(--red);  color: var(--cream); }
+.pill-select.done     { background: var(--line); color: var(--navy); }
+
+/* ── Details / disclosure ── */
+details.card summary { cursor: pointer; font-weight: 500; }
+
 /* ── Flags ── */
 .flag { border-left: 5px solid var(--amber); background: #fff; padding: 0.6rem 1rem; margin: 0.5rem 0; border-radius: 0 12px 12px 0; }
 .flag.high { border-left-color: var(--red); }

@@ -9,5 +9,10 @@ insert into guidelines (title, category, content) values
 ('Review meetings', 'review',
 'Performance review write-ups must record: objectives reviewed, evidence discussed, an agreed rating or outcome if applicable, development objectives for the next period, and support the company will provide. Both parties'' views should be reflected.');
 
-insert into employees (full_name, email, job_title, manager_name, start_date) values
-('Demo Employee', 'demo@example.com', 'Account Executive', 'Sam Manager', '2024-03-01');
+insert into employees (full_name, email, job_title, manager_name, start_date, responsibilities) values
+('Demo Employee', 'demo@example.com', 'Account Executive', 'Sam Manager', '2024-03-01',
+ 'Owns a mid-market sales patch. Runs discovery through to close and keeps CRM pipeline data accurate.');
+
+insert into objectives (employee_id, title, status, due_date)
+select id, 'Close $400k of pipeline this quarter', 'on_track', current_date + interval '90 days'
+from employees where full_name = 'Demo Employee';

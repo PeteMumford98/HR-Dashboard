@@ -4,6 +4,7 @@
 -- ── Enums ──────────────────────────────────────────────
 create type meeting_type as enum ('one_to_one', 'review', 'interview_debrief', 'other');
 create type writeup_status as enum ('draft', 'edited', 'shared', 'archived');
+create type objective_status as enum ('on_track', 'at_risk', 'done');
 
 -- ── Tables ─────────────────────────────────────────────
 create table employees (
@@ -14,6 +15,7 @@ create table employees (
   manager_name text,
   start_date date,
   status text not null default 'active',
+  responsibilities text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -24,8 +26,18 @@ create table meetings (
   granola_note_id text,
   meeting_type meeting_type not null default 'one_to_one',
   meeting_date date not null default current_date,
-  raw_note text, -- prefer leaving this null once you trust the pipeline (data minimisation)
+  raw_note text, -- kept so HR can see the original note alongside the AI write-up
   created_at timestamptz not null default now()
+);
+
+create table objectives (
+  id uuid primary key default gen_random_uuid(),
+  employee_id uuid not null references employees(id) on delete cascade,
+  title text not null,
+  status objective_status not null default 'on_track',
+  due_date date,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
 );
 
 create table writeups (
@@ -77,6 +89,7 @@ create table audit_log (
 alter table employees   enable row level security;
 alter table meetings    enable row level security;
 alter table writeups    enable row level security;
+alter table objectives  enable row level security;
 alter table guidelines  enable row level security;
 alter table share_links enable row level security;
 alter table audit_log   enable row level security;
@@ -84,6 +97,7 @@ alter table audit_log   enable row level security;
 create policy "hr full access" on employees   for all to authenticated using (true) with check (true);
 create policy "hr full access" on meetings    for all to authenticated using (true) with check (true);
 create policy "hr full access" on writeups    for all to authenticated using (true) with check (true);
+create policy "hr full access" on objectives  for all to authenticated using (true) with check (true);
 create policy "hr full access" on guidelines  for all to authenticated using (true) with check (true);
 create policy "hr full access" on share_links for all to authenticated using (true) with check (true);
 create policy "hr read audit"  on audit_log   for select to authenticated using (true);
