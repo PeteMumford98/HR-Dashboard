@@ -40,6 +40,12 @@ Nothing reaches an employee until a person clicks Share. The AI passes are advis
    ```
    Leave `GRANOLA_MODE=paste` for now.
 
+   Then confirm the connection and schema:
+   ```bash
+   npm run check:supabase
+   ```
+   Until the Supabase variables are set, the app runs against the in-memory demo store and nothing is persisted.
+
 5. **Run it:**
    ```bash
    npm run dev
