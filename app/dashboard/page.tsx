@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { listEmployees, listRecentWriteups } from "@/lib/db";
 import { isSupabaseConfigured } from "@/lib/config";
+import AddPersonForm from "./AddPersonForm";
 
 export const dynamic = "force-dynamic";
 
@@ -42,6 +43,8 @@ export default async function Dashboard() {
             </tbody>
           </table>
         </div>
+
+        <AddPersonForm />
 
         <h2>Recent write-ups</h2>
         <div className="card">
