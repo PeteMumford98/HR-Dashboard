@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getWriteupFull } from "@/lib/db";
 import WriteupEditor from "./WriteupEditor";
+import Logo from "@/app/Logo";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,7 @@ export default async function WriteupPage({ params }: { params: { id: string } }
   return (
     <>
       <header className="topbar">
-        <div className="wordmark">cartwright<span>HR write-ups</span></div>
+        <div className="wordmark"><Logo /><span>HR write-ups</span></div>
         <Link href={`/employees/${writeup.employee_id}`}>Back to {(writeup as any).employees?.full_name}</Link>
       </header>
       <main className="page">

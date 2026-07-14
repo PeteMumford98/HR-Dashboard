@@ -2,6 +2,7 @@ import Link from "next/link";
 import { listEmployees, listRecentWriteups } from "@/lib/db";
 import { isSupabaseConfigured } from "@/lib/config";
 import AddPersonForm from "./AddPersonForm";
+import Logo from "@/app/Logo";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,7 @@ export default async function Dashboard() {
   return (
     <>
       <header className="topbar">
-        <div className="wordmark">cartwright<span>HR write-ups</span></div>
+        <div className="wordmark"><Logo /><span>HR write-ups</span></div>
         {isSupabaseConfigured() && <Link href="/login">Sign out</Link>}
       </header>
       <main className="page">

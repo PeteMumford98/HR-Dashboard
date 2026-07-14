@@ -3,6 +3,7 @@ import { getEmployee, listWriteupsForEmployee, listObjectives } from "@/lib/db";
 import ProcessNoteForm from "./ProcessNoteForm";
 import ResponsibilitiesEditor from "./ResponsibilitiesEditor";
 import ObjectivesPanel from "./ObjectivesPanel";
+import Logo from "@/app/Logo";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,7 @@ export default async function EmployeePage({ params }: { params: { id: string } 
   return (
     <>
       <header className="topbar">
-        <div className="wordmark">cartwright<span>HR write-ups</span></div>
+        <div className="wordmark"><Logo /><span>HR write-ups</span></div>
         <Link href="/dashboard">All people</Link>
       </header>
       <main className="page">
