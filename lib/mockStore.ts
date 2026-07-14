@@ -116,6 +116,18 @@ export function getEmployee(id: string) {
   return employees.find((e) => e.id === id) ?? null;
 }
 
+export function createEmployee(input: {
+  full_name: string; job_title: string | null; manager_name: string | null;
+  email: string | null; start_date: string | null;
+}) {
+  const employee: Employee = {
+    id: randomUUID(), full_name: input.full_name, email: input.email, job_title: input.job_title,
+    manager_name: input.manager_name, start_date: input.start_date, status: "active", responsibilities: null,
+  };
+  employees.push(employee);
+  return employee;
+}
+
 export function updateEmployeeResponsibilities(id: string, responsibilities: string) {
   const e = employees.find((x) => x.id === id);
   if (!e) return null;

@@ -30,6 +30,31 @@ export async function getEmployee(id: string) {
   return data;
 }
 
+export async function createEmployee(input: {
+  fullName: string; jobTitle: string | null; managerName: string | null;
+  email: string | null; startDate: string | null;
+}) {
+  if (!isSupabaseConfigured()) {
+    return mock.createEmployee({
+      full_name: input.fullName, job_title: input.jobTitle, manager_name: input.managerName,
+      email: input.email, start_date: input.startDate,
+    });
+  }
+  const supabase = supabaseServer();
+  const { data, error } = await supabase
+    .from("employees")
+    .insert({
+      full_name: input.fullName,
+      job_title: input.jobTitle,
+      manager_name: input.managerName,
+      email: input.email,
+      start_date: input.startDate,
+    })
+    .select("id, full_name").single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
 export async function updateEmployeeResponsibilities(id: string, responsibilities: string) {
   if (!isSupabaseConfigured()) {
     const e = mock.updateEmployeeResponsibilities(id, responsibilities);
