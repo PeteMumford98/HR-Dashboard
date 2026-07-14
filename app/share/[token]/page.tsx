@@ -1,5 +1,6 @@
 import { hashShareToken } from "@/lib/shareTokens";
 import { getValidShareLink, getSharedWriteup, incrementShareView } from "@/lib/db";
+import Logo from "@/app/Logo";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,7 @@ export default async function ShareView({ params }: { params: { token: string } 
   if (!valid) {
     return (
       <main className="share-shell">
-        <div className="wordmark" style={{ color: "var(--blue)" }}>cartwright</div>
+        <div className="wordmark"><Logo /></div>
         <h1>This link is no longer available</h1>
         <div className="semis"><i /><i /><i /></div>
         <p>It may have expired or been withdrawn. Contact the HR team if you were expecting to read something here.</p>
@@ -29,7 +30,7 @@ export default async function ShareView({ params }: { params: { token: string } 
   if (!writeup || writeup.status !== "shared") {
     return (
       <main className="share-shell">
-        <div className="wordmark" style={{ color: "var(--blue)" }}>cartwright</div>
+        <div className="wordmark"><Logo /></div>
         <h1>This link is no longer available</h1>
         <div className="semis"><i /><i /><i /></div>
         <p>Contact the HR team if you were expecting to read something here.</p>

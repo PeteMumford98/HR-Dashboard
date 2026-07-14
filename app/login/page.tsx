@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Logo from "@/app/Logo";
 
 const SUPABASE_CONFIGURED =
   !!process.env.NEXT_PUBLIC_SUPABASE_URL && !process.env.NEXT_PUBLIC_SUPABASE_URL.startsWith("YOUR_");
@@ -28,7 +29,7 @@ export default function Login() {
   if (!SUPABASE_CONFIGURED) {
     return (
       <main className="page" style={{ maxWidth: 420 }}>
-        <div className="wordmark" style={{ color: "var(--blue)", marginBottom: "2rem" }}>cartwright</div>
+        <div className="wordmark" style={{ marginBottom: "2rem" }}><Logo /></div>
         <h1>Demo mode</h1>
         <div className="semis"><i /><i /><i /></div>
         <p className="muted">No Supabase project is configured yet, so login is skipped and the dashboard runs on sample data.</p>
@@ -39,7 +40,7 @@ export default function Login() {
 
   return (
     <main className="page" style={{ maxWidth: 420 }}>
-      <div className="wordmark" style={{ color: "var(--blue)", marginBottom: "2rem" }}>cartwright</div>
+      <div className="wordmark" style={{ marginBottom: "2rem" }}><Logo /></div>
       <h1>Sign in</h1>
       <div className="semis"><i /><i /><i /></div>
       <p className="muted">HR access only. Accounts are created in Supabase by the admin.</p>

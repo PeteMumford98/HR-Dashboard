@@ -67,12 +67,26 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   background: var(--navy);
 }
 .wordmark {
+  display: flex;
+  align-items: center;
   font-family: var(--font-display);
   font-size: 1.5rem;
   color: var(--blue);
   letter-spacing: 0.01em;
 }
 .wordmark span { color: var(--cream); font-family: var(--font-body); font-size: 0.85rem; margin-left: 0.75rem; }
+
+/* Cartwright logo, recoloured per context via CSS mask (single blue SVG). */
+.logo {
+  display: inline-block;
+  height: 30px;
+  aspect-ratio: 1376.2632 / 517.0161;
+  background-color: currentColor;
+  color: var(--blue);
+  -webkit-mask: url("/Cartwright-logo.svg") no-repeat left center / contain;
+  mask: url("/Cartwright-logo.svg") no-repeat left center / contain;
+}
+.topbar .logo { color: var(--cream); height: 24px; }
 .topbar a { color: var(--cream); font-size: 0.9rem; }
 
 .page {
@@ -186,11 +200,9 @@ textarea.editor { min-height: 22rem; font-size: 0.95rem; line-height: 1.6; }
 .muted { color: rgba(34,33,59,0.6); font-size: 0.9rem; }
 
 /* Signature: semi-circle brand motif under page titles */
-.semis { display: flex; gap: 6px; margin: 0.25rem 0 1.5rem; }
-.semis i { width: 26px; height: 13px; border-radius: 13px 13px 0 0; display: block; }
-.semis i:nth-child(1) { background: var(--blue); }
-.semis i:nth-child(2) { background: var(--amber); }
-.semis i:nth-child(3) { background: var(--pink); }
+/* Divider line under page headings (replaces the old three-shape motif). */
+.semis { height: 2px; background: var(--blue); border-radius: 2px; margin: 0.25rem 0 1.5rem; }
+.semis i { display: none; }
 
 /* Public share view */
 .share-shell { max-width: 720px; margin: 0 auto; padding: 3rem 1.5rem; }
